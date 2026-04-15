@@ -26,7 +26,7 @@ public class ChatServerUI extends JFrame {
         setTitle("TCP Chat Server");
         setSize(720, 540);
         setMinimumSize(new Dimension(580, 400));
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         buildUI();
 
@@ -34,7 +34,6 @@ public class ChatServerUI extends JFrame {
             public void windowClosing(WindowEvent e) {
                 if (logic.isRunning()) logic.stopServer();
                 dispose();
-                System.exit(0);
             }
         });
     }

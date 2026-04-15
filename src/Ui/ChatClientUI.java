@@ -40,14 +40,14 @@ public class ChatClientUI extends JFrame {
         setTitle("TCP Chat Client");
         setSize(960, 680);
         setMinimumSize(new Dimension(720, 520));
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         buildUI();
         buildMentionPopup();
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 if (logic.isConnected()) logic.disconnect();
-                dispose(); System.exit(0);
+                dispose();
             }
         });
     }
