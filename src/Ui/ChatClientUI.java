@@ -62,25 +62,37 @@ public class ChatClientUI extends JFrame {
     }
 
     private JPanel buildTopBar() {
-        JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 9));
+        JPanel bar = new JPanel(new BorderLayout(0, 6));
         bar.setBackground(Config.BG_SIDE);
         bar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Config.BG_INPUT));
 
-        bar.add(Config.styledLabel("🖧  IP:", Config.BOLD_FONT));
-        ipField = Config.styledTextField("localhost", 10); bar.add(ipField);
-        bar.add(Config.styledLabel("Port:", Config.BOLD_FONT));
-        portField = Config.styledTextField("5555", 5); bar.add(portField);
-        bar.add(Config.styledLabel("Username:", Config.BOLD_FONT));
-        usernameField = Config.styledTextField("", 10); bar.add(usernameField);
+        JPanel connectionRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
+        connectionRow.setOpaque(false);
+        connectionRow.add(Config.styledLabel("🖧  IP:", Config.BOLD_FONT));
+        ipField = Config.styledTextField("localhost", 10);
+        connectionRow.add(ipField);
+        connectionRow.add(Config.styledLabel("Port:", Config.BOLD_FONT));
+        portField = Config.styledTextField("5555", 5);
+        connectionRow.add(portField);
+        connectionRow.add(Config.styledLabel("Username:", Config.BOLD_FONT));
+        usernameField = Config.styledTextField("", 10);
+        connectionRow.add(usernameField);
 
         connectBtn    = Config.styledButton("Connect",    Config.SUCCESS);
         disconnectBtn = Config.styledButton("Disconnect", Config.DANGER);
         disconnectBtn.setEnabled(false);
-        bar.add(connectBtn); bar.add(disconnectBtn);
+
+        JPanel actionRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        actionRow.setOpaque(false);
+        actionRow.add(connectBtn);
+        actionRow.add(disconnectBtn);
 
         statusLabel = Config.styledLabel("  ⬤ Disconnected", Config.BOLD_FONT);
         statusLabel.setForeground(Config.DANGER);
-        bar.add(statusLabel);
+        actionRow.add(statusLabel);
+
+        bar.add(connectionRow, BorderLayout.NORTH);
+        bar.add(actionRow, BorderLayout.SOUTH);
 
         connectBtn   .addActionListener(e -> logic.connect(ipField.getText().trim(), portField.getText().trim(), usernameField.getText().trim()));
         disconnectBtn.addActionListener(e -> logic.disconnect());

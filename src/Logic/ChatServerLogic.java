@@ -69,6 +69,22 @@ public class ChatServerLogic {
             ui.addLog("INFO: " + username + " connected from " + ch.socket.getInetAddress().getHostAddress());
     }
 
+    public void sendAnnouncement(String text) {
+        if (!running) {
+            ui.showErrorMessage("Start the server first.", "Server Offline");
+            return;
+        }
+
+        String body = text == null ? "" : text.trim();
+        if (body.isEmpty()) {
+            ui.showErrorMessage("Announcement cannot be empty.", "Invalid Announcement");
+            return;
+        }
+
+        broadcastToAll("SERVER|" + body);
+        ui.addLog("ANNOUNCEMENT: " + body);
+    }
+
     void broadcastToAll(String message) {
         broadcast(message, null);
     }

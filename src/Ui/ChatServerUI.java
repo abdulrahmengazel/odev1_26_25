@@ -18,8 +18,9 @@ public class ChatServerUI extends JFrame {
     private JTextArea     logArea;
     private DefaultListModel<String> userListModel;
     private JTextField    portField;
+    private JTextField    announcementField;
     private JLabel        statusLabel;
-    private JButton       startBtn, stopBtn;
+    private JButton       startBtn, stopBtn, announceBtn;
 
     public ChatServerUI() {
         this.logic = new ChatServerLogic(this);
@@ -44,24 +45,41 @@ public class ChatServerUI extends JFrame {
         setLayout(new BorderLayout(0, 0));
 
         // ─── TOP BAR ───
-        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
+        JPanel topBar = new JPanel(new BorderLayout(0, 6));
         topBar.setBackground(Config.BG_PANEL);
         topBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Config.BG_INPUT));
 
-        topBar.add(Config.styledLabel("Port:", Config.BOLD_FONT));
+        JPanel controlRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
+        controlRow.setOpaque(false);
+
+        controlRow.add(Config.styledLabel("Port:", Config.BOLD_FONT));
         portField = Config.styledTextField("5555", 6);
-        topBar.add(portField);
+        controlRow.add(portField);
 
         startBtn = Config.styledButton("▶  Start Server", Config.SUCCESS);
         stopBtn  = Config.styledButton("■  Stop Server",  Config.DANGER);
         stopBtn.setEnabled(false);
-        topBar.add(startBtn);
-        topBar.add(stopBtn);
+        controlRow.add(startBtn);
+        controlRow.add(stopBtn);
 
         statusLabel = Config.styledLabel("● Offline", Config.BOLD_FONT);
         statusLabel.setForeground(Config.DANGER);
         statusLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        topBar.add(statusLabel);
+        controlRow.add(statusLabel);
+
+        JPanel announcementRow = new JPanel(new BorderLayout(8, 0));
+        announcementRow.setOpaque(false);
+        announcementRow.add(Config.styledLabel("Announcement:", Config.BOLD_FONT), BorderLayout.WEST);
+        announcementField = Config.styledTextField("", 22);
+        announcementField.setEnabled(false);
+        announcementRow.add(announcementField, BorderLayout.CENTER);
+
+        announceBtn = Config.styledButton("Send", Config.ACCENT);
+        announceBtn.setEnabled(false);
+        announcementRow.add(announceBtn, BorderLayout.EAST);
+
+        topBar.add(controlRow, BorderLayout.NORTH);
+        topBar.add(announcementRow, BorderLayout.SOUTH);
 
         add(topBar, BorderLayout.NORTH);
 
@@ -122,6 +140,15 @@ public class ChatServerUI extends JFrame {
         // ─── LISTENERS ───
         startBtn.addActionListener(e -> logic.startServer(portField.getText().trim()));
         stopBtn .addActionListener(e -> logic.stopServer());
+        announceBtn.addActionListener(e -> sendAnnouncementUI());
+        announcementField.addActionListener(e -> sendAnnouncementUI());
+    }
+
+    private void sendAnnouncementUI() {
+        String text = announcementField.getText();
+        logic.sendAnnouncement(text);
+        announcementField.setText("");
+        announcementField.requestFocusInWindow();
     }
 
     // ── Public methods to update UI from logic ──────────────────────────────
@@ -138,8 +165,11 @@ public class ChatServerUI extends JFrame {
             startBtn.setEnabled(!running);
             stopBtn .setEnabled(running);
             portField.setEnabled(!running);
+            announcementField.setEnabled(running);
+            announceBtn.setEnabled(running);
             statusLabel.setText(running ? "● Online :" + port : "● Offline");
             statusLabel.setForeground(running ? Config.SUCCESS : Config.DANGER);
+            if (!running) announcementField.setText("");
         });
     }
 
